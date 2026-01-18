@@ -1,0 +1,30 @@
+button {
+  padding: 12px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 16px;
+}
+
+input, select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+}
+
+.loader {
+  margin-top: 16px;
+  padding: 12px;
+  text-align: center;
+  color: #555;
+}
+
+.error {
+  margin-top: 16px;
+  padding: 12px;
+  background: #ffe5e5;
+  color: #900;
+  border-radius: var(--radius);
+}
