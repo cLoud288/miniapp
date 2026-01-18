@@ -5,24 +5,30 @@ import { config } from "./config.js";
  * НИКАКИХ проверок формата строки initData
  * Просто передаём как есть
  */
+async function safeJson(res) {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.error("Non-JSON response:", text);
+    throw new Error("Backend returned invalid response");
+  }
+}
+
 export async function checkSubscription(initData) {
   const res = await fetch(`${config.API_BASE_URL}/billing/subscription`, {
-    method: "GET",
     headers: {
       "X-Init-Data": initData || "",
     },
   });
 
   if (!res.ok) {
-    throw new Error("Ошибка проверки подписки");
+    throw new Error("Subscription check failed");
   }
 
-  return res.json();
+  return safeJson(res);
 }
 
-/**
- * Анализ ниши
- */
 export async function analyzeNiche({ platform, query, initData }) {
   const res = await fetch(`${config.API_BASE_URL}/analyze`, {
     method: "POST",
@@ -30,17 +36,14 @@ export async function analyzeNiche({ platform, query, initData }) {
       "Content-Type": "application/json",
       "X-Init-Data": initData || "",
     },
-    body: JSON.stringify({
-      platform,
-      query,
-    }),
+    body: JSON.stringify({ platform, query }),
   });
 
   if (!res.ok) {
-    throw new Error("Ошибка анализа ниши");
+    throw new Error("Analyze request failed");
   }
 
-  return res.json();
+  return safeJson(res);
 }
 
 /**
