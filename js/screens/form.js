@@ -1,42 +1,53 @@
-import { render, renderLoader, renderError } from '../ui.js';
-import { state } from '../state.js';
-import { analyzeNiche, checkSubscription } from '../api.js';
-import { navigate } from '../router.js';
+import { render, renderLoader, renderError } from "../ui.js";
+import { state } from "../state.js";
+import { checkSubscription, analyzeNiche } from "../api.js";
+import { navigate } from "../router.js";
 
 export function showForm() {
   render(`
     <div class="container">
       <h1>Анализ ниши</h1>
 
-      <label>
-        Площадка
-        <select id="platform">
-          <option value="">Выберите</option>
-          <option value="avito">Avito</option>
-          <option value="ozon">Ozon</option>
-          <option value="wb">Wildberries</option>
-        </select>
-      </label>
+      <form id="niche-form" novalidate>
+        <label>
+          Площадка
+          <select id="platform">
+            <option value="">Выберите</option>
+            <option value="avito">Avito</option>
+            <option value="ozon">Ozon</option>
+            <option value="wb">Wildberries</option>
+          </select>
+        </label>
 
-      <label>
-        Запрос
-        <input id="query" placeholder="iPhone 13" />
-      </label>
+        <label>
+          Запрос
+          <input
+            id="query"
+            type="text"
+            placeholder="iPhone 13"
+            autocomplete="off"
+          />
+        </label>
 
-      <button id="submit">Проверить</button>
+        <button type="submit">Проверить</button>
+      </form>
     </div>
   `);
 
-  document.getElementById('submit').onclick = submit;
+  const form = document.getElementById("niche-form");
+  form.addEventListener("submit", onSubmit);
 }
 
-async function submit() {
-  try {
-    state.platform = document.getElementById('platform').value;
-    state.query = document.getElementById('query').value;
+async function onSubmit(e) {
+  e.preventDefault(); // 🔥 КРИТИЧНО
 
-    if (!state.platform || !state.query) {
-      throw new Error('Заполните все поля');
+  try {
+    const platform = document.getElementById("platform").value;
+    const query = document.getElementById("query").value.trim();
+
+    if (!platform || !query) {
+      renderError("Заполните все поля");
+      return;
     }
 
     renderLoader();
@@ -45,15 +56,14 @@ async function submit() {
     state.isPaid = sub.active;
 
     state.report = await analyzeNiche({
-      platform: state.platform,
-      query: state.query,
+      platform,
+      query,
       initData: state.initData,
     });
 
-    state.route = 'report';
-    navigate('report');
-
-  } catch (e) {
-    renderError(e.message);
+    state.route = "report";
+    navigate("report");
+  } catch (err) {
+    renderError(err.message || "Ошибка");
   }
 }
