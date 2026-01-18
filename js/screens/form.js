@@ -8,39 +8,36 @@ export function showForm() {
     <div class="container">
       <h1>Анализ ниши</h1>
 
-      <form id="niche-form" novalidate>
-        <label>
-          Площадка
-          <select id="platform">
-            <option value="">Выберите</option>
-            <option value="avito">Avito</option>
-            <option value="ozon">Ozon</option>
-            <option value="wb">Wildberries</option>
-          </select>
-        </label>
+      <label>
+        Площадка
+        <select id="platform">
+          <option value="">Выберите</option>
+          <option value="avito">Avito</option>
+          <option value="ozon">Ozon</option>
+          <option value="wb">Wildberries</option>
+        </select>
+      </label>
 
-        <label>
-          Запрос
-          <input
-            id="query"
-            type="text"
-            placeholder="iPhone 13"
-            autocomplete="off"
-          />
-        </label>
+      <label>
+        Запрос
+        <input
+          id="query"
+          type="text"
+          placeholder="iPhone 13"
+          autocomplete="off"
+        />
+      </label>
 
-        <button type="submit">Проверить</button>
-      </form>
+      <button id="check-btn">Проверить</button>
     </div>
   `);
 
-  const form = document.getElementById("niche-form");
-  form.addEventListener("submit", onSubmit);
+  document
+    .getElementById("check-btn")
+    .addEventListener("click", onCheck);
 }
 
-async function onSubmit(e) {
-  e.preventDefault(); // 🔥 КРИТИЧНО
-
+async function onCheck() {
   try {
     const platform = document.getElementById("platform").value;
     const query = document.getElementById("query").value.trim();
