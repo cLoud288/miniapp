@@ -1,39 +1,62 @@
-import { config } from './config.js';
+import { config } from "./config.js";
 
-export async function analyzeNiche({ platform, query, initData }) {
-  const res = await fetch(`${config.API_BASE_URL}/analyze`, {
-    method: 'POST',
+/**
+ * Проверка подписки
+ * НИКАКИХ проверок формата строки initData
+ * Просто передаём как есть
+ */
+export async function checkSubscription(initData) {
+  const res = await fetch(`${config.API_BASE_URL}/billing/subscription`, {
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
-      'X-Init-Data': initData,
+      "X-Init-Data": initData || "",
     },
-    body: JSON.stringify({ platform, query }),
   });
 
   if (!res.ok) {
-    throw new Error('Ошибка анализа');
+    throw new Error("Ошибка проверки подписки");
   }
 
   return res.json();
 }
 
-export async function checkSubscription(initData) {
-  console.log('initData from frontend:', initData);
+/**
+ * Анализ ниши
+ */
+export async function analyzeNiche({ platform, query, initData }) {
+  const res = await fetch(`${config.API_BASE_URL}/analyze`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Init-Data": initData || "",
+    },
+    body: JSON.stringify({
+      platform,
+      query,
+    }),
+  });
 
-  if (!initData || typeof initData !== 'string') {
-    throw new Error('initData is empty or invalid');
+  if (!res.ok) {
+    throw new Error("Ошибка анализа ниши");
   }
 
-  return { active: false };
+  return res.json();
 }
 
+/**
+ * Создание инвойса (paywall)
+ */
 export async function createInvoice(initData) {
   const res = await fetch(`${config.API_BASE_URL}/billing/invoice`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'X-Init-Data': initData,
+      "X-Init-Data": initData || "",
     },
   });
+
+  if (!res.ok) {
+    throw new Error("Ошибка создания инвойса");
+  }
 
   return res.json();
 }
