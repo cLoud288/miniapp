@@ -1,3 +1,4 @@
+alert("APP VERSION 999");
 import { state } from "./state.js";
 import { navigate } from "./router.js";
 
