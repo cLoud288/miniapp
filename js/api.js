@@ -18,21 +18,13 @@ export async function analyzeNiche({ platform, query, initData }) {
 }
 
 export async function checkSubscription(initData) {
-  if (!initData) {
-    throw new Error('Приложение должно быть открыто из Telegram');
+  console.log('initData from frontend:', initData);
+
+  if (!initData || typeof initData !== 'string') {
+    throw new Error('initData is empty or invalid');
   }
 
-  const res = await fetch(`${config.API_BASE_URL}/billing/subscription`, {
-    headers: {
-      'X-Init-Data': initData,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error('Ошибка авторизации');
-  }
-
-  return res.json();
+  return { active: false };
 }
 
 export async function createInvoice(initData) {
